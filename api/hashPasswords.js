@@ -8,3 +8,11 @@ module.exports.hashPassword = async(password) => {
         throw new Error('Hashing faild ', error);
     }
 }
+
+module.exports.comparePasswords = async(password, hashedPassword) => {
+    try {
+        return await bcrypt.compare(password, hashedPassword);
+    } catch (error) {
+        throw new Error('Hashing faild ', error);
+    }
+}

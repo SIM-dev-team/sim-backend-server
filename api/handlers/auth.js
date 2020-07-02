@@ -6,6 +6,7 @@ const joi = require('joi');
 const randomString = require('randomstring');
 
 const CompanySchema = require("../schemas/companySchema");
+const LoginSchema = require('../schemas/loginSchema');
 const e = require("express");
 
 const hash = require('../hashPasswords');
@@ -93,7 +94,35 @@ exports.PDCUserRegistration = (req, res) => {
 }
 
 exports.CompanyLogin = (req, res) => {
-    res.send('company login api set up');
+    const result = joi.validate(req.body, LoginSchema);
+    if (result.error) {
+        res.send('data validation faild');
+    } else {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            client.query(`SELECT password FROM company WHERE email = '${req.body.email}'`, (errp, resp) => {
+                if (errp) {
+                    res.send('no user data found');
+                } else {
+                    if (resp.rows[0]) {
+                        hash.comparePasswords(req.body.password, resp.rows[0].password).then(
+                            resopnd => {
+                                if (resopnd) {
+                                    res.send('user account matched');
+                                } else {
+                                    res.send('incorrect password');
+                                }
+                            }
+                        )
+
+                    } else {
+                        res.send('no user data found');
+                    }
+                }
+            });
+
+        });
+    }
 }
 
 exports.PDCUserLogin = (req, res) => {
