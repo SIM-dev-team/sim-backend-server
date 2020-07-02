@@ -10,5 +10,6 @@ module.exports.env_data = {
     MAIL_CONFIG: {
         MAILGUN_USER: 'postmaster@sandbox8ebab170abab4cccb7837bbc7a9952e5.mailgun.org',
         MAILGUN_PASS: 'a8c47bee089c61f51e801c63f1872999-913a5827-a18f5c1c'
-    }
+    },
+    JWT_TOKEN: 'PDC_SECRET_KEY'
 };
