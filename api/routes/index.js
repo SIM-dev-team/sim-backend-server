@@ -3,6 +3,8 @@ const path = require('path');
 
 const authRoutes = require("./auth");
 const verifyToken = require("./verifyToken");
+const verifyAndProceed = require('../handlers/verifyToken')
+
 
 router.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, '../../index.html'));
@@ -10,5 +12,9 @@ router.get('/', function(req, res) {
 
 router.use('/auth', authRoutes);
 router.use('/verify', verifyToken);
+
+router.use('/secretRoutes', verifyAndProceed.VerifyJWTTokenAndProceed, (req, res) => {
+    res.send('authorized user to the secret route');
+})
 
 module.exports = router;
