@@ -5,6 +5,7 @@ const CompanySchema = joi.object().keys({
     comp_name: joi.string().required(),
     date_of_establishment: joi.date().required(),
     comp_website: joi.string().required(),
+    profile_pic_url: joi.string(),
     description: joi.string().required(),
     address: joi.string().required(),
     contact_number: joi.string().required(),
