@@ -1,18 +1,18 @@
 const express = require("express");
 const pool = require('../../db');
-const { request } = require("express");
 
 const joi = require('joi');
 const randomString = require('randomstring');
+const jwt = require('jsonwebtoken');
 
 const CompanySchema = require("../schemas/companySchema");
 const LoginSchema = require('../schemas/loginSchema');
-const e = require("express");
 
 const hash = require('../hashPasswords');
 const mailer = require('../misc/mailer');
 
 const verifymail = require('../mails/verifyEmail');
+const config = require('../config/data');
 
 exports.CompanyRegistration = (req, res) => {
     const result = joi.validate(req.body, CompanySchema);
@@ -100,7 +100,7 @@ exports.CompanyLogin = (req, res) => {
     } else {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
-            client.query(`SELECT password FROM company WHERE email = '${req.body.email}'`, (errp, resp) => {
+            client.query(`SELECT password,comp_id FROM company WHERE email = '${req.body.email}'`, (errp, resp) => {
                 if (errp) {
                     res.send('no user data found');
                 } else {
@@ -108,7 +108,8 @@ exports.CompanyLogin = (req, res) => {
                         hash.comparePasswords(req.body.password, resp.rows[0].password).then(
                             resopnd => {
                                 if (resopnd) {
-                                    res.send('user account matched');
+                                    const token = jwt.sign({ id: resp.rows[0].comp_id }, config.env_data.JWT_TOKEN)
+                                    res.header('auth-token', token).send(token);
                                 } else {
                                     res.send('incorrect password');
                                 }
