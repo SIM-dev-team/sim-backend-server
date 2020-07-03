@@ -14,7 +14,7 @@ router.use('/auth', authRoutes);
 router.use('/verify', verifyToken);
 
 router.use('/secretRoutes', verifyAndProceed.VerifyJWTTokenAndProceed, (req, res) => {
-    res.send('authorized user to the secret route');
+    res.send(req.user);
 })
 
 module.exports = router;
