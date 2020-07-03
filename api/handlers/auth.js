@@ -44,7 +44,7 @@ exports.CompanyRegistration = (req, res) => {
                                             req.body.num_of_techleads, req.body.provide_internships, false, false, null, '001', secretToken
                                         ], (errp, resp) => {
                                             if (errp) {
-                                                return res.send(errp.stack);
+                                                return res.satus(500).send(errp.stack);
                                             } else {
                                                 return res.send(resp.rows[0]);
                                             }
@@ -96,7 +96,7 @@ exports.PDCUserRegistration = (req, res) => {
 exports.CompanyLogin = (req, res) => {
     const result = joi.validate(req.body, LoginSchema);
     if (result.error) {
-        res.send('data validation faild');
+        res.satus(500).send('data validation faild');
     } else {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
@@ -111,13 +111,13 @@ exports.CompanyLogin = (req, res) => {
                                     const token = jwt.sign({ id: resp.rows[0].comp_id }, config.env_data.JWT_TOKEN)
                                     res.header('auth-token', token).send(token);
                                 } else {
-                                    res.send('incorrect password');
+                                    res.satus(401).send('incorrect password');
                                 }
                             }
                         )
 
                     } else {
-                        res.send('no user data found');
+                        res.satus(400).send('no user data found');
                     }
                 }
             });
@@ -127,7 +127,36 @@ exports.CompanyLogin = (req, res) => {
 }
 
 exports.PDCUserLogin = (req, res) => {
-    res.send('pcd user login api set up');
+    const result = joi.validate(req.body, LoginSchema);
+    if (result.error) {
+        res.send('data validation faild');
+    } else {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            client.query(`SELECT password FROM pdc_users WHERE email = '${req.body.email}'`, (errp, resp) => {
+                if (errp) {
+                    res.satus(400).send('no user data found x');
+                } else {
+                    if (resp.rows[0]) {
+                        hash.comparePasswords(req.body.password, resp.rows[0].password).then(
+                            resopnd => {
+                                if (resopnd) {
+                                    const token = jwt.sign({ id: req.body.email }, config.env_data.JWT_TOKEN)
+                                    res.header('auth-token', token).send(token);
+                                } else {
+                                    res.satus(401).send('incorrect password');
+                                }
+                            }
+                        )
+
+                    } else {
+                        res.satus(400).send('no user data found');
+                    }
+                }
+            });
+
+        });
+    }
 }
 
 exports.VerifyEmail = (req, res) => {
