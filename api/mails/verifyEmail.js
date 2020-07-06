@@ -6,8 +6,9 @@ module.exports = {
                         <p>your secret key : ${token}</p>
                         <br/>
                         <p>proceed with this link</p>
+                        <a href="http://localhost:3000/verify-email"> verification link<a>
                         <br/>
-                        <h6>Thank you !!!</h6>
+                        <h3>Thank you !!!</h3>
                         `
         return body;
     }

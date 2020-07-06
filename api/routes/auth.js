@@ -9,5 +9,7 @@ router.post('/PDCUserRegister', handler.PDCUserRegistration);
 router.post('/UserLogin', handler.PDCUserLogin);
 
 router.post('/verifyEmail', handler.VerifyEmail);
+router.post('/forgotpassword', handler.ForgotPassword);
+router.post('/resetPassword', handler.ResetPassword);
 
 module.exports = router;
