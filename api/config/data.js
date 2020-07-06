@@ -5,11 +5,12 @@ module.exports.env_data = {
         database: 'sim_db',
         password: 'simuserpassword',
         port: 5000,
+        max: 50
     },
     PORT: 5000,
     MAIL_CONFIG: {
-        MAILGUN_USER: 'postmaster@sandbox8ebab170abab4cccb7837bbc7a9952e5.mailgun.org',
-        MAILGUN_PASS: 'a8c47bee089c61f51e801c63f1872999-913a5827-a18f5c1c'
+        MAILGUN_USER: 'postmaster@sandboxc5cb4736c86e4ccea2ceed9fc9e40513.mailgun.org',
+        MAILGUN_PASS: 'fe363f7850134a1d00ed2b26ea1d231b-913a5827-f8c58fb1'
     },
     JWT_TOKEN: 'PDC_SECRET_KEY'
 };
