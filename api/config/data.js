@@ -9,8 +9,8 @@ module.exports.env_data = {
     },
     PORT: 5000,
     MAIL_CONFIG: {
-        MAILGUN_USER: 'postmaster@sandboxc5cb4736c86e4ccea2ceed9fc9e40513.mailgun.org',
-        MAILGUN_PASS: 'fe363f7850134a1d00ed2b26ea1d231b-913a5827-f8c58fb1'
+        MAILGUN_USER: '',
+        MAILGUN_PASS: ''
     },
     JWT_TOKEN: 'PDC_SECRET_KEY'
 };
