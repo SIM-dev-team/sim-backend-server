@@ -6,7 +6,7 @@ const { env_data } = require('../config/data');
 const joi = require('joi');
 
 exports.GetCompanyData = (req, res) => {
-    const token = req.header('token');
+    const token = req.params.token;
     if (!token) {
         return res.status(401).send('access denied');
     }

@@ -259,7 +259,6 @@ exports.ForgotPassword = (req,res) => {
 }
 
 exports.ResetPassword = (req, res) => {
-    console.log(req.body);
     pool.connect((err, client, done) => {
         if (err) {
             res.send('error connecting to database');
