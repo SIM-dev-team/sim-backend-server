@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const handler = require("../handlers/advert");
+const handler = require("../handlers/adverts");
 
 router.post("/create", handler.CreateAdvert);
 router.get("/get/:id", handler.GetAdvert);
