@@ -38,7 +38,7 @@ exports.GetAll = (req , res) =>{
                 if (errp) {
                     res.send('no user data found');
                 } else {
-                    res.status(200).json(resp.rows[0]);
+                    res.status(200).json(resp.rows);
                 }
             });
         })
