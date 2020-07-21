@@ -66,7 +66,7 @@ exports.CompanyRegistration = (req, res) => {
                                                                 req.body.comp_name, 
                                                                 req.body.date_of_establishment, 
                                                                 req.body.description,
-                                                                null, 
+                                                                'https://firebasestorage.googleapis.com/v0/b/sim-ucsc-6b57b.appspot.com/o/CompanyProfilePictures%2Ftoppng.com-business-icon-establish-a-company-ico-901x901.png?alt=media&token=f02b5595-a09c-4fd2-af60-beb08fa5eb79', 
                                                                 req.body.comp_website, 
                                                                 req.body.address, 
                                                                 req.body.contact_number, 
