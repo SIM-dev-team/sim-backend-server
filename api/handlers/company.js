@@ -15,7 +15,7 @@ exports.GetCompanyData = (req, res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`SELECT reg_no,email,comp_name,date_of_establishment,comp_website,profile_pic_url,description,address,contact_number,fax_number,num_of_employees,num_of_techleads,provide_internships,is_verified,is_approved FROM company WHERE comp_id = '${verified.id}'`, (errp, resp) => {
+            client.query(`SELECT comp_id,reg_no,email,comp_name,date_of_establishment,comp_website,profile_pic_url,description,address,contact_number,fax_number,num_of_employees,num_of_techleads,provide_internships,is_verified,is_approved FROM company WHERE comp_id = '${verified.id}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no user data found');
@@ -49,4 +49,32 @@ exports.GetAll = (req , res) =>{
     catch(e){
         res.status(500).json('error')
     }
+}
+
+exports.UpdateProfile = (req, res) => {
+    console.log(req.body.updatedData);
+    pool.connect((err, client, done) => {
+        if (err) {
+            res.send('error connecting to database');
+        }
+        client.query(
+            `UPDATE company SET 
+                comp_website  = '${req.body.updatedData.comp_website}' , 
+                profile_pic_url  = '${req.body.updatedData.profile_pic}' ,
+                description = '${req.body.updatedData.description}' ,
+                contact_number = '${req.body.updatedData.contact_number}' ,
+                fax_number = '${req.body.updatedData.fax_number}'
+                WHERE comp_id= '${req.body.updatedData.comp_id}' RETURNING *`, (errp, resp) => {
+            client.release();
+            if (errp) {
+                console.error(errp.stack);
+            } else {
+                if (!resp.rows[0]) {
+                    res.send('Please enter a valid token');
+                } else {
+                    res.send('account verified successfully');
+                }
+            }
+        });
+    });
 }
