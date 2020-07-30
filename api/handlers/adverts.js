@@ -43,7 +43,7 @@ exports.CreateAdvert = (req, res) => {
                             parseInt(req.body.cat_id),
                             req.body.comp_name,
                             req.body.comp_website,
-                            req.body.profile_pic_url,
+                            req.body.profile_pic,
                             new Date() ,
                             result.value.internship_position ,
                             result.value.position_desc ,
@@ -144,7 +144,7 @@ exports.GetAllAdvertsByCompanyId = ( req , res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`SELECT * FROM adverts WHERE comp_id = '${req.body.id}'`, (errp, resp) => {
+            client.query(`SELECT * FROM adverts WHERE comp_id = '${req.params.id}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
@@ -165,7 +165,7 @@ exports.GetAllAdvertsByCategory = ( req , res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`SELECT * FROM adverts WHERE internship_position = '${req.params.category}'`, (errp, resp) => {
+            client.query(`SELECT * FROM adverts WHERE cat_id = '${req.params.cat_id}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
