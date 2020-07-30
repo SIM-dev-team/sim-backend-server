@@ -11,5 +11,8 @@ router.put("/ApproveAdvert" , handler.ApproveAdvert);
 router.put("/DeclineAdvert" , handler.DeclineAdvert);
 router.post("/Apply/:id" , handler.ApplyForAdvert);
 router.put("/publish" , handler.PublishAdverts);
+router.post("/addCategory" , handler.AddNewCategory);
+router.get("/getCategory/:id" , handler.GetCategory);
+router.get("/getCategories" , handler.GetCategories);
 
 module.exports = router;

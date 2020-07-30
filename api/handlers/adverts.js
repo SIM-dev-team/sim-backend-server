@@ -11,6 +11,7 @@ const AdvertSchema = require("../schemas/advertSchema");
 exports.CreateAdvert = (req, res) => {
     const result = joi.validate(req.body, AdvertSchema);
     const token = req.body.token;
+    // console.log(req.body)
     if (!token) {
         return res.status(401).send('access denied');
     }
@@ -23,6 +24,10 @@ exports.CreateAdvert = (req, res) => {
                 client.query(
                     `INSERT INTO adverts
                     (   comp_id,
+                        cat_id,
+                        comp_name,
+                        comp_website,
+                        profile_pic_url,
                         date_created ,
                         internship_position ,
                         position_desc ,
@@ -32,9 +37,13 @@ exports.CreateAdvert = (req, res) => {
                         no_of_positions ,
                         no_of_applicants ,
                         attachment_url ,
-                        status   ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`, 
+                        status   ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *`, 
                         [   
                             verified.id,
+                            parseInt(req.body.cat_id),
+                            req.body.comp_name,
+                            req.body.comp_website,
+                            req.body.profile_pic_url,
                             new Date() ,
                             result.value.internship_position ,
                             result.value.position_desc ,
@@ -115,6 +124,27 @@ exports.GetAllAdvertsByCompany = ( req , res) => {
             if (err) res.send('error connecting to database...');
             else{
             client.query(`SELECT * FROM adverts WHERE comp_id = '${verified.id}'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    res.send('no data');
+                } else {
+                    res.status(200).json(resp.rows);
+                }
+            });
+        }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
+}
+
+// get all adverts by a given company id
+exports.GetAllAdvertsByCompanyId = ( req , res) => {
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+            client.query(`SELECT * FROM adverts WHERE comp_id = '${req.body.id}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
@@ -218,5 +248,70 @@ exports.PublishAdverts = (req , res) => {
         });
     } catch (e) {
         return res.status(400).send('invalid token');
+    }
+}
+
+// add new intenship position category
+exports.AddNewCategory = (req , res ) => {
+    try{
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+            client.query(`INSERT INTO categories(cat_id , cat_name)VALUES(nextval('category_sequence'),$1) RETURNING *`,[ req.body.category], (errp, resp) => {
+                client.release();
+                if (errp) {
+                    res.send('something went wrong');
+                } else {
+                    res.status(200).json(resp.rows[0]);
+                }
+            });
+        }
+        });
+    }catch(e){
+        return res.status(400).send('something went wrong'); 
+    }
+}
+
+// get intenship position category by category id
+exports.GetCategory = (req , res ) => {
+    try{
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+                client.query(`SELECT * FROM categories WHERE cat_id = '${req.params.id}'`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('no data');
+                    } else {
+                        res.status(200).json(resp.rows[0]);
+                    }
+            });
+        }
+        });
+    }catch(e){
+        return res.status(400).send('something went wrong'); 
+    }
+}
+
+
+// get all internship position categories
+
+exports.GetCategories = (req , res ) => {
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+                client.query(`SELECT * FROM categories`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('no data');
+                    } else {
+                        res.status(200).json(resp.rows);
+                    }
+            });
+        }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
     }
 }
