@@ -35,7 +35,7 @@ exports.GetAll = (req , res) =>{
         pool.connect((err , client , done) =>{
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`SELECT reg_no,email,comp_name,date_of_establishment,comp_website,profile_pic_url,description,address,contact_number,fax_number,num_of_employees,num_of_techleads,provide_internships,is_verified,is_approved FROM company`, (errp, resp) => {
+            client.query(`SELECT comp_id,reg_no,email,comp_name,date_of_establishment,comp_website,profile_pic_url,description,address,contact_number,fax_number,num_of_employees,num_of_techleads,provide_internships,is_verified,is_approved FROM company`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no user data found');

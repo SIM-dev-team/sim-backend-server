@@ -236,7 +236,7 @@ exports.PublishAdverts = (req , res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`UPDATE advert SET status = published' RETURNING *`, (errp, resp) => {
+            client.query(`UPDATE advert SET status = published' WHERE status = approved RETURNING *`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
