@@ -82,7 +82,7 @@ exports.CompanyRegistration = (req, res) => {
                                         ], (errp, resp) => {
                                             client.release();
                                             if (errp) {
-                                                res.send('error connecting to the database');
+                                                res.send(errp.message);
                                             } else {
                                                 res.send(resp.rows[0]);
                                             }

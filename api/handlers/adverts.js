@@ -76,7 +76,7 @@ exports.GetAdvert = ( req , res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`SELECT * FROM adverts WHERE id = '${res.params.id}'`, (errp, resp) => {
+            client.query(`SELECT * FROM adverts WHERE ad_id = '${req.params.id}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
