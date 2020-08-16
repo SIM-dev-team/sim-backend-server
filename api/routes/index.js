@@ -6,6 +6,7 @@ const verifyToken = require("./verifyToken");
 const verifyAndProceed = require('../handlers/verifyToken')
 const CompanyRoutes = require('./company');
 const AdvertRoute = require('./advert');
+const StudentRoute = require('./student');
 
 
 router.get('/', function(req, res) {
@@ -16,6 +17,7 @@ router.use('/auth', authRoutes);
 router.use('/verify', verifyToken);
 router.use('/company', CompanyRoutes);
 router.use('/advert' , AdvertRoute);
+router.use('/student' , StudentRoute);
 
 router.use('/secretRoutes', verifyAndProceed.VerifyJWTTokenAndProceed, (req, res) => {
     res.send(req.user);
