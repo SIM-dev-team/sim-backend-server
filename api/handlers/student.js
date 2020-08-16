@@ -5,6 +5,9 @@ const { env_data } = require('../config/data');
 
 const joi = require('joi');
 
+const hash = require('../hashPasswords');
+const mailer = require('../misc/mailer');
+
 const StudentSchema = require("../schemas/studentSchema");
 
 exports.AddNewStudent = (req, res) => {
@@ -54,9 +57,29 @@ exports.login = (req, res) => {
 }
 
 exports.setPassword = (req, res) => {
-    console.log(res)
+    pool.connect((err, client, done) => {
+        if (err) {
+            res.send('error connecting to database');
+        }
+        hash.hashPassword(req.body.password).then(
+            (hashedPass) => { 
+                client.query(`UPDATE students SET password = '${hashedPass}' , secretKey = '' WHERE secretKey= '${req.body.id}' RETURNING *`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        console.error(errp.stack);
+                    } else {
+                        if (!resp.rows[0]) {
+                            res.send('invalid');
+                        } else {
+                            res.send('password set successfully');
+                        }
+                    }
+                });
+        }).catch((e)=>{res.send('error');})  
+    });
 }
 
 exports.forgotPassword = (req, res) => {
-    console.log(res)
+    const token = jwt.sign({ reg_no : req.body.reg_no }, env_data.JWT_TOKEN);
+    console.log(token)
 }
