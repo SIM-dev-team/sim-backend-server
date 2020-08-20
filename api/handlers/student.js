@@ -11,6 +11,8 @@ const mailer = require('../misc/mailer');
 const StudentSchema = require("../schemas/studentSchema");
 const LoginSchema = require("../schemas/studentLoginSchema");
 
+const studentmail = require('../mails/studentMail');
+
 exports.AddNewStudent = (req, res) => {
     pool.connect((err, client, done) => {
         if (err) {
@@ -42,7 +44,12 @@ exports.AddNewStudent = (req, res) => {
                     if (err) {
                         console.log(err.stack)
                     } else {
-                        return res.send(resp.rows[0]);
+                        const html = studentmail.html(token);
+                        mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+                            res.send(resp.rows[0])
+                        ).catch(
+                            res.send('email error')
+                        ); 
                     }
                 });
 
