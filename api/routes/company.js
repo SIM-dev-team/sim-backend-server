@@ -7,5 +7,6 @@ router.get("/getAll" , handler.GetAll);
 router.post("/update" , handler.UpdateProfile);
 router.get("/getCompany/:id" , handler.GetCompanyById)
 router.post("/approveCompany", handler.ApproveCompany);
+router.post("/sendMailtoCompany", handler.SendMail);
 
 module.exports = router;

@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 const { env_data } = require('../config/data');
 
 const joi = require('joi');
+const mailer = require('../misc/mailer');
+const mail = require('../mails/mailTemplate');
+const approvedmail = require('../mails/approvedmail');
 
 exports.GetCompanyData = (req, res) => {
     const token = req.params.token;
@@ -109,11 +112,29 @@ exports.ApproveCompany = (req , res ) => {
                 if (errp) {
                     res.send('no company data found');
                 } else {
-                    res.status(200).json(resp.rows[0]);
+                    const html1 = approvedmail.html();
+                    mailer.sendEmail('admin@pdc.com', 'congratulations !!! your company has been approved by PDC ', 'Approved by PDC', html1).then(
+                        res.status(200).json(resp.rows[0])
+                    ).catch(
+                        res.send('failed')
+                    )
                 }
             });
         }
         });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
+
+exports.SendMail = (req , res ) => {
+    try {
+        const html = mail.html(req.body.emailBody);
+        mailer.sendEmail('admin@pdc.com', req.body.email, req.body.title, html).then(
+            res.send('sent')
+        ).catch(
+            res.send('failed')
+        )
     } catch (e) {
         return res.status(400).send('error');
     }
