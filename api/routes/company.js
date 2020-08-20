@@ -6,5 +6,6 @@ router.get("/get/:token", handler.GetCompanyData);
 router.get("/getAll" , handler.GetAll);
 router.post("/update" , handler.UpdateProfile);
 router.get("/getCompany/:id" , handler.GetCompanyById)
+router.post("/approveCompany", handler.ApproveCompany);
 
 module.exports = router;
