@@ -38,7 +38,7 @@ exports.AddNewStudent = (req, res) => {
                                          result.value.course, 
                                          '', 
                                          false, 
-                                         token],
+                                         ''],
                 (err, resp) => {
                     client.release();
                     if (err) {
@@ -101,7 +101,8 @@ exports.setPassword = (req, res) => {
         }
         hash.hashPassword(req.body.password).then(
             (hashedPass) => { 
-                client.query(`UPDATE students SET password = '${hashedPass}' , secretKey = '' WHERE secretKey= '${req.body.id}' RETURNING *`, (errp, resp) => {
+                const verified = jwt.verify(req.body.token, env_data.JWT_TOKEN);
+                client.query(`UPDATE students SET password = '${hashedPass}' , is_verified = 'true' WHERE reg_no = '${verified.reg_no}' RETURNING *`, (errp, resp) => {
                     client.release();
                     if (errp) {
                         console.error(errp.stack);
@@ -119,5 +120,25 @@ exports.setPassword = (req, res) => {
 
 exports.forgotPassword = (req, res) => {
     const token = jwt.sign({ reg_no : req.body.reg_no }, env_data.JWT_TOKEN);
-    console.log(token)
+    const html = studentmail.html(token);
+    pool.connect((err, client, done) => {
+        if (err) res.send('error connecting to database...');
+        client.query(`SELECT email FROM students WHERE reg_no = '${req.body.reg_no}'`, (errp, resp) => {
+            client.release();
+            if (errp) {
+                res.status(400).send('no user data found');
+            } else {
+                if (resp.rows[0]) {
+                    mailer.sendEmail('admin@pdc.com', resp.rows[0].email , 'Please set your password', html).then(
+                        res.send(resp.rows[0])
+                    ).catch(
+                        res.send('email error')
+                    );
+                } else {
+                    res.status(400).send('no user data found');
+                }
+            }
+        });
+
+    });
 }
