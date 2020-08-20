@@ -98,3 +98,23 @@ exports.GetCompanyById = (req , res ) => {
         return res.status(400).send('error');
     }
 }
+
+exports.ApproveCompany = (req , res ) => {
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+            client.query(`UPDATE company SET is_approved ='true', approved_date = '${Date.now()}', user_id = '${req.body.user_id}' , WHERE comp_id = '${req.body.comp_id}'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    res.send('no company data found');
+                } else {
+                    res.status(200).json(resp.rows[0]);
+                }
+            });
+        }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
