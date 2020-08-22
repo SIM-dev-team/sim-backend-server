@@ -73,16 +73,20 @@ exports.login = (req, res) => {
                     res.status(400).send('no user data found x');
                 } else {
                     if (resp.rows[0]) {
-                        hash.comparePasswords(req.body.password, resp.rows[0].password).then(
-                            resopnd => {
-                                if (resopnd) {
-                                    const token = jwt.sign({ id: req.body.email }, config.env_data.JWT_TOKEN)
-                                    res.header('auth-token', token).send(token);
-                                } else {
-                                    res.status(401).send('incorrect password');
+                        if(!resp.rows[0].is_verified){
+                            res.status(401).send('not verified');
+                        }else{
+                            hash.comparePasswords(req.body.password, resp.rows[0].password).then(
+                                resopnd => {
+                                    if (resopnd) {
+                                        const token = jwt.sign({ id: req.body.email }, config.env_data.JWT_TOKEN)
+                                        res.header('auth-token', token).send(token);
+                                    } else {
+                                        res.status(401).send('incorrect password');
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
 
                     } else {
                         res.status(400).send('no user data found');
