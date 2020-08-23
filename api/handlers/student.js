@@ -67,7 +67,7 @@ exports.login = (req, res) => {
     } else {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
-            client.query(`SELECT password FROM students WHERE reg_no = '${req.body.reg_no}'`, (errp, resp) => {
+            client.query(`SELECT password , is_verified FROM students WHERE reg_no = '${req.body.reg_no}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.status(400).send('no user data found x');
