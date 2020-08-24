@@ -11,7 +11,8 @@ const mailer = require('../misc/mailer');
 const StudentSchema = require("../schemas/studentSchema");
 const LoginSchema = require("../schemas/studentLoginSchema");
 
-const studentmail = require('../mails/studentMail');
+const studentmail = require('../mails/student/studentMail');
+const passwordResetmail = require('../mails/student/studentPasswordReset');
 
 exports.AddNewStudent = (req, res) => {
     pool.connect((err, client, done) => {
@@ -20,7 +21,7 @@ exports.AddNewStudent = (req, res) => {
         }
         try {
             const result = joi.validate(req.body, StudentSchema);
-            const token = jwt.sign({ reg_no : result.reg_no }, env_data.JWT_TOKEN);
+            const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
             console.log(result);
             client.query(`INSERT INTO students(
                                         reg_no,
@@ -44,12 +45,13 @@ exports.AddNewStudent = (req, res) => {
                     if (err) {
                         console.log(err.stack)
                     } else {
+                        let message = '';
                         const html = studentmail.html(token);
                         mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-                            res.send(resp.rows[0])
-                        ).catch(
-                            res.send('email error')
-                        ); 
+                            message = resp.rows[0]
+                        ).catch(e => console.log(e))
+
+                        res.send(message);
                     }
                 });
 
@@ -79,7 +81,7 @@ exports.login = (req, res) => {
                             hash.comparePasswords(req.body.password, resp.rows[0].password).then(
                                 resopnd => {
                                     if (resopnd) {
-                                        const token = jwt.sign({ id: req.body.email }, config.env_data.JWT_TOKEN)
+                                        const token = jwt.sign({ id: req.body.email }, env_data.JWT_TOKEN)
                                         res.header('auth-token', token).send(token);
                                     } else {
                                         res.status(401).send('incorrect password');
@@ -106,6 +108,7 @@ exports.setPassword = (req, res) => {
         hash.hashPassword(req.body.password).then(
             (hashedPass) => { 
                 const verified = jwt.verify(req.body.token, env_data.JWT_TOKEN);
+                console.log(verified);
                 client.query(`UPDATE students SET password = '${hashedPass}' , is_verified = 'true' WHERE reg_no = '${verified.reg_no}' RETURNING *`, (errp, resp) => {
                     client.release();
                     if (errp) {
@@ -124,7 +127,7 @@ exports.setPassword = (req, res) => {
 
 exports.forgotPassword = (req, res) => {
     const token = jwt.sign({ reg_no : req.body.reg_no }, env_data.JWT_TOKEN);
-    const html = studentmail.html(token);
+    const html = passwordResetmail.html(token);
     pool.connect((err, client, done) => {
         if (err) res.send('error connecting to database...');
         client.query(`SELECT email FROM students WHERE reg_no = '${req.body.reg_no}'`, (errp, resp) => {
@@ -133,11 +136,9 @@ exports.forgotPassword = (req, res) => {
                 res.status(400).send('no user data found');
             } else {
                 if (resp.rows[0]) {
-                    mailer.sendEmail('admin@pdc.com', resp.rows[0].email , 'Please set your password', html).then(
+                    mailer.sendEmail('admin@pdc.com', resp.rows[0].email , 'You have requested to reset your password', html).then(
                         res.send(resp.rows[0])
-                    ).catch(
-                        res.send('email error')
-                    );
+                    ).catch(e => console.log(e));
                 } else {
                     res.status(400).send('no user data found');
                 }
