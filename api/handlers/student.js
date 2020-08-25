@@ -72,26 +72,26 @@ exports.login = (req, res) => {
             client.query(`SELECT password , is_verified FROM students WHERE reg_no = '${req.body.reg_no}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
-                    res.status(400).send('no user data found x');
+                    res.send('no user data found');
                 } else {
                     if (resp.rows[0]) {
                         if(!resp.rows[0].is_verified){
-                            res.status(401).send('not verified');
+                            res.send('not verified');
                         }else{
                             hash.comparePasswords(req.body.password, resp.rows[0].password).then(
                                 resopnd => {
                                     if (resopnd) {
                                         const token = jwt.sign({ id: req.body.email }, env_data.JWT_TOKEN)
-                                        res.header('auth-token', token).send(token);
+                                        res.send(token);
                                     } else {
-                                        res.status(401).send('incorrect password');
+                                        res.send('incorrect password');
                                     }
                                 }
                             )
                         }
 
                     } else {
-                        res.status(400).send('no user data found');
+                        res.send('no user data found');
                     }
                 }
             });
