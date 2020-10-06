@@ -108,28 +108,30 @@ exports.PDCUserRegistration = (req, res) => {
         l_name: req.body.l_name,
         email: req.body.email,
         user_name: req.body.user_name,
-        password: req.body.password,
         role: req.body.role,
     }
-    pool.connect((err, client, done) => {
-        if (err) {
-            return console.log('err');
-        }
-        try {
-            client.query('INSERT INTO pdc_users(user_id,f_name,l_name,email,user_name,password,role) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *', [newUser.user_id, newUser.f_name, newUser.l_name, newUser.email, newUser.user_name, newUser.password, newUser.role],
-                (err, resp) => {
-                    client.release();
-                    if (err) {
-                        console.log(err.stack)
-                    } else {
-                        return res.send(resp.rows[0]);
-                    }
-                });
+    hash.hashPassword(req.body.password).then(
+        (hashedPass) => {
+            pool.connect((err, client, done) => {
+                if (err) {
+                    return console.log('err');
+                }
+                try {
+                    client.query('INSERT INTO pdc_users(user_id,f_name,l_name,email,user_name,password,role) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *', [newUser.user_id, newUser.f_name, newUser.l_name, newUser.email, newUser.user_name, hashedPass, newUser.role],
+                        (err, resp) => {
+                            client.release();
+                            if (err) {
+                                console.log(err.stack)
+                            } else {
+                                return res.send(resp.rows[0]);
+                            }
+                        });
 
-        } catch (e) {
-            return e;
-        }
-    });
+                } catch (e) {
+                    return e;
+                }
+            });
+        })
 }
 
 exports.CompanyLogin = (req, res) => {

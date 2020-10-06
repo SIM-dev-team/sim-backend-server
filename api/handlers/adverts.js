@@ -183,11 +183,12 @@ exports.GetAllAdvertsByCategory = ( req , res) => {
 //approve an advert by PDC
 exports.ApproveAdvert = ( req , res) => {
     try {
-        const verified = jwt.verify(token, env_data.JWT_TOKEN);
+        // const verified = jwt.verify(token, env_data.JWT_TOKEN);
+        console.log(req.body.id)
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`UPDATE advert SET status = approved WHERE id= '${req.body.id}' RETURNING *`, (errp, resp) => {
+            client.query(`UPDATE adverts SET status = 'approved' WHERE ad_id= '${req.body.id}' RETURNING *`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
