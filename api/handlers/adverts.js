@@ -112,6 +112,26 @@ exports.GetAllAdverts = ( req , res) => {
     }
 }
 
+exports.GetAllApproved = (req , res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+            client.query(`SELECT * FROM adverts WHERE status = 'approved'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    res.send('no data');
+                } else {
+                    res.status(200).json(resp.rows);
+                }
+            });
+        }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
+}
+
 // get all adverts by a given company
 exports.GetAllAdvertsByCompany = ( req , res) => {
     const token = req.body.token;
@@ -227,7 +247,54 @@ exports.DeclineAdvert = ( req , res ) => {
 
 //apply for a advert by a student
 exports.ApplyForAdvert = ( req , res ) => {
-    console.log('apply for advert works');
+    try {
+        console.log(req.body.Data);
+        const verified = jwt.verify(req.body.Data.token, env_data.JWT_TOKEN);
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+                client.query(`INSERT INTO advert_student(id,s_id , a_id , cv_link)VALUES(nextval('student_advert_sequence'),$1,$2,$3) RETURNING *`,[verified.id , req.body.Data.advert , req.body.Data.link ], (errp, resp) => {
+                    
+                    if (errp) {
+                        res.send(errp);
+                    } else {
+                        client.query(`UPDATE adverts SET no_of_applicants = no_of_applicants + 1 WHERE ad_id = ${req.body.Data.advert} RETURNING *`, (errpp, resp) => {
+                            if(errpp){
+                                res.send(errpp); 
+                            }else{
+                                res.status(200).json(resp.rows[0]);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
+}
+
+//get applied adverts by a student
+exports.GetAppliedAdverts = ( req , res ) => {
+    try {
+        const verified = jwt.verify(req.body.token, env_data.JWT_TOKEN);
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else{
+                console.log("token >" , verified.id);
+                client.query(`SELECT * FROM  advert_student WHERE s_id = '${verified.id}'`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send(errp);
+                    } else {
+                        res.status(200).json(resp.rows);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
 }
 
 //publish adverts for students by PDC
@@ -237,7 +304,7 @@ exports.PublishAdverts = (req , res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-            client.query(`UPDATE advert SET status = published' WHERE status = approved RETURNING *`, (errp, resp) => {
+            client.query(`UPDATE advert SET status = published WHERE status = approved RETURNING *`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send('no data');
