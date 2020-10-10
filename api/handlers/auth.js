@@ -42,7 +42,7 @@ exports.CompanyRegistration = (req, res) => {
                                 mailer.sendEmail('admin@pdc.com', req.body.email, 'Please verify your email', html).then(
                                     () => {
                                         client.
-                                        query(`INSERT INTO company(   
+                                            query(`INSERT INTO company(   
                                                             email,
                                                             password ,
                                                             comp_name,
@@ -61,32 +61,32 @@ exports.CompanyRegistration = (req, res) => {
                                                             approved_date,
                                                             user_id , 
                                                             secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING *`
-                                                            , [ req.body.email,
-                                                                hashedPass, 
-                                                                req.body.comp_name, 
-                                                                req.body.date_of_establishment, 
-                                                                req.body.description,
-                                                                'https://firebasestorage.googleapis.com/v0/b/sim-ucsc-6b57b.appspot.com/o/CompanyProfilePictures%2Ftoppng.com-business-icon-establish-a-company-ico-901x901.png?alt=media&token=f02b5595-a09c-4fd2-af60-beb08fa5eb79', 
-                                                                req.body.comp_website, 
-                                                                req.body.address, 
-                                                                req.body.contact_number, 
-                                                                req.body.fax_number, 
-                                                                req.body.num_of_employees,
-                                                                req.body.num_of_techleads, 
-                                                                true, 
-                                                                false, 
-                                                                false, 
-                                                                null, 
-                                                                '001', 
-                                                                secretToken
-                                        ], (errp, resp) => {
-                                            client.release();
-                                            if (errp) {
-                                                res.send(errp.message);
-                                            } else {
-                                                res.send(resp.rows[0]);
-                                            }
-                                        });
+                                                , [req.body.email,
+                                                    hashedPass,
+                                                req.body.comp_name,
+                                                req.body.date_of_establishment,
+                                                req.body.description,
+                                                    'https://firebasestorage.googleapis.com/v0/b/sim-ucsc-6b57b.appspot.com/o/CompanyProfilePictures%2Ftoppng.com-business-icon-establish-a-company-ico-901x901.png?alt=media&token=f02b5595-a09c-4fd2-af60-beb08fa5eb79',
+                                                req.body.comp_website,
+                                                req.body.address,
+                                                req.body.contact_number,
+                                                req.body.fax_number,
+                                                req.body.num_of_employees,
+                                                req.body.num_of_techleads,
+                                                    true,
+                                                    false,
+                                                    false,
+                                                    null,
+                                                    '001',
+                                                    secretToken
+                                                ], (errp, resp) => {
+                                                    client.release();
+                                                    if (errp) {
+                                                        res.send(errp.message);
+                                                    } else {
+                                                        res.send(resp.rows[0]);
+                                                    }
+                                                });
                                     }
                                 ).catch(e => console.log(e))
 
@@ -148,7 +148,7 @@ exports.CompanyLogin = (req, res) => {
                     res.send(errp.stack);
                 } else {
                     if (resp.rows[0]) {
-                        if(resp.rows[0].is_verified){
+                        if (resp.rows[0].is_verified) {
                             hash.comparePasswords(req.body.password, resp.rows[0].password).then(
                                 resopnd => {
                                     if (resopnd) {
@@ -159,7 +159,7 @@ exports.CompanyLogin = (req, res) => {
                                     }
                                 }
                             )
-                        }else{
+                        } else {
                             res.send('Account not verified');
                         }
                     } else {
@@ -226,7 +226,7 @@ exports.VerifyEmail = (req, res) => {
     });
 }
 
-exports.ForgotPassword = (req,res) => {
+exports.ForgotPassword = (req, res) => {
     pool.connect((err, client, done) => {
         if (err) res.send('error connecting to database');
         client.query(`SELECT is_verified FROM company WHERE email = '${req.body.email}'`, (errp, resp) => {
@@ -234,7 +234,7 @@ exports.ForgotPassword = (req,res) => {
                 res.status(400).send('no user data found x');
             } else {
                 if (resp.rows[0]) {
-                    if(resp.rows[0].is_verified){
+                    if (resp.rows[0].is_verified) {
                         const secretToken = randomString.generate();
                         const html = passwordResetmail.html(secretToken);
                         mailer.sendEmail('admin@pdc.com', req.body.email, 'Password reset', html).then(
@@ -248,7 +248,7 @@ exports.ForgotPassword = (req,res) => {
                                     }
                                 })
                         );
-                    }else{
+                    } else {
                         res.send('Account not verified');
                     }
                 } else {
@@ -266,7 +266,7 @@ exports.ResetPassword = (req, res) => {
             res.send('error connecting to database');
         }
         hash.hashPassword(req.body.password).then(
-            (hashedPass) => { 
+            (hashedPass) => {
                 client.query(`UPDATE company SET password = '${hashedPass}' , secretKey = '' WHERE secretKey= '${req.body.id}' RETURNING *`, (errp, resp) => {
                     client.release();
                     if (errp) {
@@ -279,6 +279,29 @@ exports.ResetPassword = (req, res) => {
                         }
                     }
                 });
-            }).catch((e)=>{res.send('error');})  
+            }).catch((e) => { res.send('error'); })
     });
+}
+
+
+//get PDC users List
+
+exports.GetPDCUsersData = (req, res) => {
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT * FROM pdc_users`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('no data');
+                    } else {
+                        res.status(200).json(resp.rows);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
 }
