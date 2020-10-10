@@ -103,14 +103,14 @@ exports.CompanyRegistration = (req, res) => {
 
 exports.PDCUserRegistration = (req, res) => {
     const newUser = {
-        user_id: req.body.user_id,
-        f_name: req.body.f_name,
-        l_name: req.body.l_name,
-        email: req.body.email,
-        user_name: req.body.user_name,
-        role: req.body.role,
+        user_id: req.body.newUser.user_id,
+        f_name: req.body.newUser.f_name,
+        l_name: req.body.newUser.l_name,
+        email: req.body.newUser.email,
+        user_name: req.body.newUser.user_name,
+        role: req.body.newUser.role,
     }
-    hash.hashPassword(req.body.password).then(
+    hash.hashPassword(req.body.newUser.password).then(
         (hashedPass) => {
             pool.connect((err, client, done) => {
                 if (err) {
