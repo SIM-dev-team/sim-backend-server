@@ -14,7 +14,156 @@ const LoginSchema = require("../schemas/studentLoginSchema");
 const studentmail = require('../mails/student/studentMail');
 const passwordResetmail = require('../mails/student/studentPasswordReset');
 
+// exports.AddNewStudent = (req, res) => {
+//     pool.connect((err, client, done) => {
+//         if (err) {
+//             return console.log('err');
+//         }
+//         try {
+//             const result = joi.validate(req.body, StudentSchema);
+//             const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
+//             console.log(result);
+//             client.query(`INSERT INTO students(
+//                                         reg_no,
+//                                         index_no,
+//                                         name,
+//                                         email,
+//                                         course,
+//                                         password,
+//                                         is_verified,
+//                                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, 
+//                                         [result.value.reg_no, 
+//                                          result.value.index_no, 
+//                                          result.value.name, 
+//                                          result.value.email,
+//                                          result.value.course, 
+//                                          '', 
+//                                          false, 
+//                                          ''],
+//                 (err, resp) => {
+//                     client.release();
+//                     if (err) {
+//                         console.log(err.stack)
+//                     } else {
+//                         let message = '';
+//                         const html = studentmail.html(token);
+//                         mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+//                             message = resp.rows[0]
+//                         ).catch(e => console.log(e))
+
+//                         res.send(message);
+//                     }
+//                 });
+
+//         } catch (e) {
+//             return e;
+//         }
+//     });
+
+// }
+
+
 exports.AddNewStudent = (req, res) => {
+    //console.log(req.body)
+    const strings = req.body;
+    //console.log(strings[0])
+    for(let obj of strings){
+        console.log(obj.data[0])
+        // pool.connect((err, client, done) => {
+        //     if (err) {
+        //         return console.log('err');
+        //     }
+        //     try {
+        //         const result = joi.validate(req.body, StudentSchema);
+        //         const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
+        //         console.log(result);
+        //         client.query(`INSERT INTO students(
+        //                                     reg_no,
+        //                                     index_no,
+        //                                     name,
+        //                                     email,
+        //                                     course,
+        //                                     password,
+        //                                     is_verified,
+        //                                     secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, 
+        //                                     [obj.data[0], 
+        //                                       obj.data[1], 
+        //                                       obj.data[2], 
+        //                                       obj.data[3],
+        //                                       obj.data[4], 
+        //                                       '', 
+        //                                       false, 
+        //                                       ''],
+        //             (err, resp) => {
+        //                 client.release();
+        //                 if (err) {
+        //                     console.log(err.stack)
+        //                 } else {
+        //                     let message = '';
+        //                     const html = studentmail.html(token);
+        //                     mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+        //                         message = resp.rows[0]
+        //                     ).catch(e => console.log(e))
+    
+        //                     res.send(message);
+        //                 }
+        //             });
+    
+        //     } catch (e) {
+        //         return e;
+        //     }
+        // }); 
+    }
+    res.send({message: "Success"})
+
+}
+
+exports.getAllData = (req, res) => {
+    pool.connect((err, client, done) => {
+        if (err) res.send('error connecting to database...');
+        client.query(`SELECT * FROM students`, (errp, resp) => {
+            client.release();
+            if (errp) {
+                res.send('no user data found');
+            } else {
+                console.log(resp.rows)
+                // var data_array = new Array()
+                // for(let data of resp.rows){
+                //     const array_temp = [data.name,data.reg_no,data.index_no,data.course?"CS":"IS",data.email,""]
+                //     data_array.push(array_temp)
+                // }
+                res.send({data: resp.rows})
+            }
+        });
+
+    });
+}
+
+exports.updateStudent = (req, res) => {
+    pool.connect((err, client, done) => {
+        if (err) {
+            return console.log('err');
+        }
+        try {
+            const result = joi.validate(req.body, StudentSchema);
+            client.query(`UPDATE students SET index_no=${req.body.index_no}, reg_no='${req.body.reg_np}, name='${req.body.name}, degree=${req.body.course}, email='${req.body.email}, contact=${req.body.contact}`, 
+                (err, resp) => {
+                    client.release();
+                    if (err) {
+                        console.log(err.stack)
+                    } else {
+                        let message = 'Success';
+                        res.send({message: message});
+                    }
+                });
+
+        } catch (e) {
+            return e;
+        }
+    }); 
+}
+
+exports.addNewStudent = (req, res) => {
     pool.connect((err, client, done) => {
         if (err) {
             return console.log('err');
@@ -64,8 +213,7 @@ exports.AddNewStudent = (req, res) => {
         } catch (e) {
             return e;
         }
-    });
-
+    }); 
 }
 
 exports.UpdateStudent = (req, res) => {
