@@ -11,5 +11,6 @@ router.post('/UserLogin', handler.PDCUserLogin);
 router.post('/verifyEmail', handler.VerifyEmail);
 router.post('/forgotpassword', handler.ForgotPassword);
 router.post('/resetPassword', handler.ResetPassword);
+router.get('/getPDCUsers', handler.GetPDCUsersData);
 
 module.exports = router;
