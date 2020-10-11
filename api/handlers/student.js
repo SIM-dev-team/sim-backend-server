@@ -115,7 +115,6 @@ exports.AddNewStudent = (req, res) => {
         // }); 
     }
     res.send({message: "Success"})
-
 }
 
 exports.getAllData = (req, res) => {
