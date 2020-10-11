@@ -179,6 +179,26 @@ exports.GetAllAdvertsByCompanyId = (req, res) => {
     }
 }
 
+exports.GetApprovedAdvertsByCompanyId = (req, res) => {
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT * FROM adverts WHERE comp_id = '${req.params.id}' AND status = 'approved'`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('no data');
+                    } else {
+                        res.status(200).json(resp.rows);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
+}
+
 // get all adverts by a given category
 exports.GetAllAdvertsByCategory = (req, res) => {
     try {
