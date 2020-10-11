@@ -295,6 +295,7 @@ exports.GetAppliedAdverts = ( req , res ) => {
     } catch (e) {
         return res.status(400).send('invalid token');
     }
+}
 
 //publish adverts for students by PDC
 exports.PublishAdverts = (req, res) => {
@@ -466,3 +467,4 @@ exports.CompaniesPostedAds = (req, res) => {
         return res.status(400).send('invalid token');
     }
 }
+
