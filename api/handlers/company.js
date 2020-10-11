@@ -112,12 +112,12 @@ exports.ApproveCompany = (req, res) => {
                     if (errp) {
                         res.send('no company data found');
                     } else {
-                        const html1 = approvedmail.html();
-                        mailer.sendEmail('admin@pdc.com', 'congratulations !!! your company has been approved by PDC ', 'Approved by PDC', html1).then(
+                        // const html1 = approvedmail.html();
+                        // mailer.sendEmail('admin@pdc.com', 'congratulations !!! your company has been approved by PDC ', 'Approved by PDC', html1).then(
                             res.status(200).json(resp.rows[0])
-                        ).catch(
-                            res.send('failed')
-                        )
+                        // ).catch(
+                        //     res.send('failed')
+                        // )
                     }
                 });
             }

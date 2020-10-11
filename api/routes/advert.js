@@ -21,6 +21,6 @@ router.get("/getPending", handler.GetPendingAdverts);
 router.get("/getApprovedAds", handler.GetApprovedAdverts);
 router.get("/getDeclinedAds", handler.GetDeclinedAdverts);
 router.get("/getAdPostedCompanies", handler.CompaniesPostedAds);
-router.get("/getApprovdAdvertsByCompanyId", handler.GetApprovedAdvertsByCompanyId);
+router.get("/getApprovdAdvertsByCompanyId/:id", handler.GetApprovedAdvertsByCompanyId);
 
 module.exports = router;
