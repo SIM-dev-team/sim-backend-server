@@ -2,7 +2,7 @@ const express = require("express");
 const pool = require('../../db');
 const jwt = require('jsonwebtoken');
 const { env_data } = require('../config/data');
-
+const format = require('pg-format');
 const joi = require('joi');
 
 const hash = require('../hashPasswords');
@@ -63,59 +63,110 @@ const passwordResetmail = require('../mails/student/studentPasswordReset');
 // }
 
 
+
+
 exports.AddNewStudent = (req, res) => {
     //console.log(req.body)
     const strings = req.body;
-    //console.log(strings[0])
+    // const data = [
+    //     ['2017CS133', '17000978', 'Oshan Mendis', 'oha@gmail.com', 1, '778908978', '3.99', '', true, 10, ''],
+    //     ['2017CS134', '17000971', 'Oshan1 Mendis', 'oha1@gmail.com', 1, '778908978', '3.99', '', true, 10, ''],
+    //     ['2017CS180', '17000991', 'Oshan2 Mendis', 'oha2@gmail.com', 1, '778908978', '3.49', '', true, 10, ''],
+    //     ['2017CS181', '17000941', 'Oshan3 Mendis', 'oha3@gmail.com', 1, '778908978', '3.49', '', true, 10, '']
+    // ]
+    const dataArray = new Array()
     for(let obj of strings){
-        console.log(obj.data[0])
-        // pool.connect((err, client, done) => {
-        //     if (err) {
-        //         return console.log('err');
-        //     }
-        //     try {
-        //         const result = joi.validate(req.body, StudentSchema);
-        //         const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
-        //         console.log(result);
-        //         client.query(`INSERT INTO students(
-        //                                     reg_no,
-        //                                     index_no,
-        //                                     name,
-        //                                     email,
-        //                                     course,
-        //                                     password,
-        //                                     is_verified,
-        //                                     secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, 
-        //                                     [obj.data[0], 
-        //                                       obj.data[1], 
-        //                                       obj.data[2], 
-        //                                       obj.data[3],
-        //                                       obj.data[4], 
-        //                                       '', 
-        //                                       false, 
-        //                                       ''],
-        //             (err, resp) => {
-        //                 client.release();
-        //                 if (err) {
-        //                     console.log(err.stack)
-        //                 } else {
-        //                     let message = '';
-        //                     const html = studentmail.html(token);
-        //                     mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-        //                         message = resp.rows[0]
-        //                     ).catch(e => console.log(e))
-    
-        //                     res.send(message);
-        //                 }
-        //             });
-    
-        //     } catch (e) {
-        //         return e;
-        //     }
-        // }); 
+        if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
+            console.log(obj.data)
+            const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,10,'']
+            dataArray.push(tempArray)
+        } else {
+            continue;
+        }
     }
-    res.send({message: "Success"})
+   // console.log(strings)
+    var count=0;
+    pool.connect((err, client, done) => {
+        if (err) {
+            console.log('err');
+        }
+        try {
+            let query1 = format('INSERT INTO students (reg_no, index_no, name, email, course, contact, current_gpa, password, is_verified, completed, secretKey) VALUES %L ON CONFLICT (reg_no) DO NOTHING returning *', dataArray);
+            // const result = joi.validate(req.body[1], StudentSchema);
+            // const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
+            // console.log(result);
+            client.query(query1,
+(err, resp) => {
+//client.release();
+if (err) {
+console.log(err.stack)
+} else {
+ let message = '';
+ console.log(resp)
+ //onsole.log(obj.data)
+ //console.log(count++)
+// const html = studentmail.html(token);
+// mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+//     message = resp.rows[0]
+// ).catch(e => console.log(e))
+
+res.send({message: "Success"})
 }
+});
+
+//             for(let obj of strings){
+//                 if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
+//                     client.query(`INSERT INTO students(
+//                         reg_no,
+//                         index_no,
+//                         name,
+//                         email,
+//                         course,
+//                         contact,
+//                         current_gpa,
+//                         password,
+//                         is_verified,
+//                         completed,
+//                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT (reg_no) DO NOTHING RETURNING *`, 
+//                         [obj.data[0], 
+//                           obj.data[1], 
+//                           obj.data[2], 
+//                           obj.data[3],
+//                           obj.data[4]=='1'?1:0, 
+//                           obj.data[5],
+//                           obj.data[6],
+//                           '', 
+//                           true, 
+//                           10,
+//                           ''
+//                         ],
+// (err, resp) => {
+//     //client.release();
+//     if (err) {
+//         console.log(err.stack)
+//     } else {
+//          let message = '';
+//          console.log(obj.data)
+//          //console.log(count++)
+//         // const html = studentmail.html(token);
+//         // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+//         //     message = resp.rows[0]
+//         // ).catch(e => console.log(e))
+
+//         res.send({message: "Success"})
+//     }
+//     });
+//     } else {
+//         continue;
+//     }
+//     }
+
+    } catch (e) {
+        console.log("ERROR=>"+e)
+    }
+    }); 
+}
+
 
 exports.getAllData = (req, res) => {
     pool.connect((err, client, done) => {
