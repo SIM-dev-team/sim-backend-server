@@ -96,23 +96,23 @@ exports.AddNewStudent = (req, res) => {
             // const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
             // console.log(result);
             client.query(query1,
-(err, resp) => {
-//client.release();
-if (err) {
-console.log(err.stack)
-} else {
- let message = '';
- console.log(resp)
- //onsole.log(obj.data)
- //console.log(count++)
-// const html = studentmail.html(token);
-// mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-//     message = resp.rows[0]
-// ).catch(e => console.log(e))
+        (err, resp) => {
+        //client.release();
+        if (err) {
+        console.log(err.stack)
+        } else {
+            let message = '';
+            console.log(resp)
+            //onsole.log(obj.data)
+            //console.log(count++)
+            // const html = studentmail.html(token);
+            // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+            //     message = resp.rows[0]
+            // ).catch(e => console.log(e))
 
-res.send({message: "Success"})
-}
-});
+            res.send({message: "Success"})
+            }
+        });
 
 //             for(let obj of strings){
 //                 if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
