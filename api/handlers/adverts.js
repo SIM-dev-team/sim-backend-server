@@ -513,7 +513,7 @@ exports.RequestAdverts = (req, res) =>{
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else {
-                client.query(`INSERT INTO states (state , value , deadline)VALUES($1,$2,$3) RETURNING *`,['is_requesting_adverts' , true , req.body.date], (errp, resp) => {
+                client.query(`UPDATE states SET value = true , deadline = ${req.body.date} WHERE state_id = 1  RETURNING *`, (errp, resp) => {
                     client.release();
                     if (errp) {
                         res.send('error');
@@ -534,7 +534,7 @@ exports.GetAdvertState = (req, res) =>{
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else {
-                client.query(`SELECT value,deadline FROM states WHERE state = is_requesting_adverts`, (errp, resp) => {
+                client.query(`SELECT val,deadline FROM states WHERE state_id = 1`, (errp, resp) => {
                     client.release();
                     if (errp) {
                         res.send('error');
