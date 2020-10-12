@@ -107,17 +107,15 @@ exports.ApproveCompany = (req, res) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else {
-                client.query(`UPDATE company SET is_approved = true, user_id = '${req.body.user_id}' WHERE comp_id = '${req.body.comp_id}' RETURNING *`, (errp, resp) => {
+                client.query(`UPDATE company SET is_approved = true WHERE comp_id = '${req.body.comp_id}' RETURNING *`, (errp, resp) => {
                     client.release();
                     if (errp) {
                         res.send('no company data found');
                     } else {
+                        console.log();
                         const html1 = approvedmail.html();
-                        mailer.sendEmail('admin@pdc.com', 'congratulations !!! your company has been approved by PDC ', 'Approved by PDC', html1).then(
-                            res.status(200).json(resp.rows[0])
-                        ).catch(
-                            res.send('failed')
-                        )
+                        mailer.sendEmail('admin@pdc.com', resp.rows[0].email,'congratulations !!! your company has been approved by PDC ', html1);
+                        res.status(200).json(resp.rows[0]);  
                     }
                 });
             }
