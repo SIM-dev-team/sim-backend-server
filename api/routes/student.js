@@ -16,5 +16,6 @@ router.get("/getProject/:id", handler.getProject);
 router.get("/studentState", handler.GetStudentState);
 router.post("/confirmApplicant" , handler.ConfirmStudent);
 router.get("/getInternshipInfo" , handler.GetConfirmedStudentDetails);
+router.get("/studentcount", handler.GetStudentCount);
 
 module.exports = router;
