@@ -28,7 +28,7 @@ exports.AddNewStudent = (req, res) => {
     for(let obj of strings){
         if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
             console.log(obj.data)
-            const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,0,'']
+            const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,0,'',0,0,0]
             dataArray.push(tempArray)
         } else {
             continue;
@@ -41,7 +41,22 @@ exports.AddNewStudent = (req, res) => {
             console.log('err');
         }
         try {
-            let query1 = format('INSERT INTO students (reg_no, index_no, name, email, course, contact, current_gpa, password, is_verified, confirmed_comp, secretKey) VALUES %L ON CONFLICT (reg_no) DO NOTHING returning *', dataArray);
+            let query1 = format(`INSERT INTO students (
+                                        reg_no, 
+                                        index_no, 
+                                        name, 
+                                        email, 
+                                        course, 
+                                        contact, 
+                                        current_gpa, 
+                                        password, 
+                                        is_verified, 
+                                        confirmed_comp, 
+                                        secretKey,
+                                        projects_1,
+                                        projects_2,
+                                        projects_3) 
+                                        VALUES %L ON CONFLICT (reg_no) DO NOTHING returning *`, dataArray);
             // const result = joi.validate(req.body[1], StudentSchema);
             // const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
             // console.log(result);
@@ -53,7 +68,7 @@ exports.AddNewStudent = (req, res) => {
         } else {
             let message = '';
             console.log(resp)
-            const token = jwt.sign({ reg_no : '2017cs006' }, env_data.JWT_TOKEN);
+            const token = jwt.sign({ reg_no : '2017CS006' }, env_data.JWT_TOKEN);
             const html = studentmail.html(token);
             mailer.sendEmail('admin@pdc.com', 'hasanthamalshan07@gmail.com', 'Please set your password', html)
             .then(
