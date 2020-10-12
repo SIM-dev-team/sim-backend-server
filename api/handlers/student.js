@@ -30,6 +30,15 @@ exports.AddNewStudent = (req, res) => {
             console.log(obj.data)
             const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,0,'']
             dataArray.push(tempArray)
+            try{
+                const token = jwt.sign({ reg_no : obj.data[0] }, env_data.JWT_TOKEN);
+            // onsole.log(obj.data)
+            // console.log(count++)
+                const html = studentmail.html(token);
+                mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html)
+            }catch(e){
+                console.log(e);
+            }
         } else {
             continue;
         }
@@ -52,11 +61,13 @@ exports.AddNewStudent = (req, res) => {
         console.log(err.stack)
         } else {
             let message = '';
-            console.log(resp)
-            // onsole.log(obj.data)
-            // console.log(count++)
+            // console.log(resp)
+            // const token = jwt.sign({ reg_no : resp.value.reg_no }, env_data.JWT_TOKEN);
+            // // onsole.log(obj.data)
+            // // console.log(count++)
             // const html = studentmail.html(token);
-            // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+            // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html)
+            // .then(
             //     message = resp.rows[0]
             // ).catch(e => console.log(e))
             try{
@@ -73,53 +84,6 @@ exports.AddNewStudent = (req, res) => {
             }
             }
         });
-
-//             for(let obj of strings){
-//                 if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
-//                     client.query(`INSERT INTO students(
-//                         reg_no,
-//                         index_no,
-//                         name,
-//                         email,
-//                         course,
-//                         contact,
-//                         current_gpa,
-//                         password,
-//                         is_verified,
-//                         confirmed_comp,
-//                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT (reg_no) DO NOTHING RETURNING *`, 
-//                         [obj.data[0], 
-//                           obj.data[1], 
-//                           obj.data[2], 
-//                           obj.data[3],
-//                           obj.data[4]=='1'?1:0, 
-//                           obj.data[5],
-//                           obj.data[6],
-//                           '', 
-//                           true, 
-//                           10,
-//                           ''
-//                         ],
-// (err, resp) => {
-//     //client.release();
-//     if (err) {
-//         console.log(err.stack)
-//     } else {
-//          let message = '';
-//          console.log(obj.data)
-//          //console.log(count++)
-//         // const html = studentmail.html(token);
-//         // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-//         //     message = resp.rows[0]
-//         // ).catch(e => console.log(e))
-
-//         res.send({message: "Success"})
-//     }
-//     });
-//     } else {
-//         continue;
-//     }
-//     }
 
     } catch (e) {
         console.log("ERROR=>"+e)
