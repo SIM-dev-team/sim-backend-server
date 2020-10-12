@@ -12,58 +12,8 @@ const StudentSchema = require("../schemas/studentSchema");
 const LoginSchema = require("../schemas/studentLoginSchema");
 
 const studentmail = require('../mails/student/studentMail');
+const selectedMail = require('../mails/student/selected');
 const passwordResetmail = require('../mails/student/studentPasswordReset');
-
-// exports.AddNewStudent = (req, res) => {
-//     pool.connect((err, client, done) => {
-//         if (err) {
-//             return console.log('err');
-//         }
-//         try {
-//             const result = joi.validate(req.body, StudentSchema);
-//             const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
-//             console.log(result);
-//             client.query(`INSERT INTO students(
-//                                         reg_no,
-//                                         index_no,
-//                                         name,
-//                                         email,
-//                                         course,
-//                                         password,
-//                                         is_verified,
-//                                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, 
-//                                         [result.value.reg_no, 
-//                                          result.value.index_no, 
-//                                          result.value.name, 
-//                                          result.value.email,
-//                                          result.value.course, 
-//                                          '', 
-//                                          false, 
-//                                          ''],
-//                 (err, resp) => {
-//                     client.release();
-//                     if (err) {
-//                         console.log(err.stack)
-//                     } else {
-//                         let message = '';
-//                         const html = studentmail.html(token);
-//                         mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-//                             message = resp.rows[0]
-//                         ).catch(e => console.log(e))
-
-//                         res.send(message);
-//                     }
-//                 });
-
-//         } catch (e) {
-//             return e;
-//         }
-//     });
-
-// }
-
-
-
 
 exports.AddNewStudent = (req, res) => {
     //console.log(req.body)
@@ -96,23 +46,33 @@ exports.AddNewStudent = (req, res) => {
             // const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
             // console.log(result);
             client.query(query1,
-            (err, resp) => {
-            //client.release();
-            if (err) {
-            console.log(err.stack)
-            } else {
+        (err, resp) => {
+        //client.release();
+        if (err) {
+        console.log(err.stack)
+        } else {
             let message = '';
             console.log(resp)
-            //onsole.log(obj.data)
-            //console.log(count++)
+            // onsole.log(obj.data)
+            // console.log(count++)
             // const html = studentmail.html(token);
             // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
             //     message = resp.rows[0]
             // ).catch(e => console.log(e))
-
-            res.send({message: "Success"})
+            try{
+                client.query(`INSERT INTO states (state , value )VALUES($1,$2) RETURNING *`,['is_students_enrolled' , true], (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.send({message: "Success"})
+                    }
+                });
+            }catch(e){
+                res.send(e);
             }
-            });
+            }
+        });
 
 //             for(let obj of strings){
 //                 if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
@@ -229,23 +189,36 @@ exports.addNewStudent = (req, res) => {
                                         name,
                                         email,
                                         course,
-                                        contact,
                                         current_gpa,
+                                        contact,
                                         password,
                                         is_verified,
                                         confirmed_comp,
-                                        secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`, 
+                                        projects_1,
+                                        projects_2,
+                                        projects_3,
+                                        secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`, 
+                                        // [result.value.reg_no, 
+                                        //  result.value.index_no, 
+                                        //  result.value.name, 
+                                        //  result.value.email,
+                                        //  result.value.course,
+                                        //  result.value.gpa,  
+                                        //  result.value.contact, 
                                         [req.body.newStudent.regno, 
                                           req.body.newStudent.indexno, 
                                           req.body.newStudent.name, 
                                           req.body.newStudent.email,
                                           req.body.newStudent.degree==="Computer Science"?1:0, 
-                                          req.body.newStudent.contact, 
                                           req.body.newStudent.gpa,
-                                          '',
-                                          false, 
-                                          0,
-                                          ''],
+                                          req.body.newStudent.contact,   
+                                        '', 
+                                         false, 
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         ''],
                 (err, resp) => {
                     client.release();
                     if (err) {
@@ -268,7 +241,111 @@ exports.addNewStudent = (req, res) => {
     }); 
 }
 
+exports.UpdateStudent = (req, res) => {
+    pool.connect((err, client, done) => {
+        if (err) {
+            return console.log('err');
+        }
+        try {
+            console.log(req.body.updatedData);
+            client.query(`UPDATE students SET 
+                                    interested_1  = '${req.body.updatedData.interested_1}' , 
+                                    interested_2  = '${req.body.updatedData.interested_2}' ,
+                                    interested_3 = '${req.body.updatedData.interested_3}' ,
+                                    profile_pic_url = '${req.body.updatedData.profile_pic_url}'
+                                    WHERE reg_no = '${req.body.updatedData.reg_no}' RETURNING * `, (errp, resp) => {
+                            client.release();
+                            if (errp) {
+                                console.error(errp.stack);
+                            } else {
+                                if (!resp.rows[0]) {
+                                    res.send('error');
+                                } else {
+                                    res.send('account updated successfully');
+                                }
+                            }
+                        });
+        } catch (e) {
+            return e;
+        }
+    });
 
+}
+
+exports.AddProject = (req , res) =>{
+    pool.connect((err, client, done) => {
+        if (err) {
+            return console.log('err');
+        }
+        // try {
+            const num = req.body.data;
+            console.log(num);
+        //     console.log(req.body);
+            
+        // } catch (e) {
+        //     return e;
+        // }
+        try {
+            client.query(`INSERT INTO projects(
+                                        name,
+                                        description,
+                                        tech_stack,
+                                        link) VALUES ($1,$2,$3,$4) RETURNING *`, 
+                                        [req.body.data.name, 
+                                        req.body.data.desc, 
+                                        req.body.data.tech, 
+                                        req.body.data.link],
+                (err, resp) => {
+                    if (err) {
+                        console.log(err.stack)
+                    } else {
+                        try {
+                            client.query(`UPDATE students SET 
+                                                    projects_${req.body.data.number} = '${resp.rows[0].id}'
+                                                    WHERE reg_no = '${req.body.data.reg_no}' RETURNING * `, (errp, respp) => {
+
+                                            client.release();
+                                            if (errp) {
+                                                console.error(errp.stack);
+                                            } else {
+                                                if (!respp.rows[0]) {
+                                                    res.send('error');
+                                                } else {
+                                                    res.send('account updated successfully');
+                                                }
+                                            }
+                                        });
+                        } catch (e) {
+                            return e;
+                        }
+                    }
+                });
+
+        } catch (e) {
+            return e;
+        }
+    });
+}
+exports.getProject = (req,res) =>{
+    pool.connect((err, client, done) => {
+        if (err) {
+            res.send('error connecting to database');
+        }else{
+            client.query(`SELECT * FROM projects WHERE id = '${req.params.id}'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    console.error(errp.stack);
+                } else {
+                    if (resp.rows[0]) {
+                        res.send(resp.rows[0]);
+                    } else {
+                        res.send('error');
+                    }
+                }
+            });
+        }
+    });
+}
 exports.login = (req, res) => {
     const result = joi.validate(req.body, LoginSchema);
     if (result.error) {
@@ -288,7 +365,7 @@ exports.login = (req, res) => {
                             hash.comparePasswords(req.body.password, resp.rows[0].password).then(
                                 resopnd => {
                                     if (resopnd) {
-                                        const token = jwt.sign({ id: req.body.email }, env_data.JWT_TOKEN)
+                                        const token = jwt.sign({ id: req.body.reg_no }, env_data.JWT_TOKEN)
                                         res.send(token);
                                     } else {
                                         res.send('incorrect password');
@@ -332,6 +409,49 @@ exports.setPassword = (req, res) => {
     });
 }
 
+exports.getStudentData = (req , res) =>{
+    pool.connect((err, client, done) => {
+        if (err) {
+            res.send('error connecting to database');
+        }else{
+            const verified = jwt.verify(req.body.token, env_data.JWT_TOKEN);
+            client.query(`SELECT * FROM students WHERE reg_no = '${verified.id}'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    console.error(errp.stack);
+                } else {
+                    if (resp.rows[0]) {
+                        res.send(resp.rows[0]);
+                    } else {
+                        res.send('unauthorized');
+                    }
+                }
+            });
+        }
+    });
+}
+
+exports.getStudentDataById = (req , res) =>{
+    pool.connect((err, client, done) => {
+        if (err) {
+            res.send('error connecting to database');
+        }else{
+            client.query(`SELECT * FROM students WHERE reg_no = '${req.body.id}'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    console.error(errp.stack);
+                } else {
+                    if (resp.rows[0]) {
+                        res.send(resp.rows[0]);
+                    } else {
+                        res.send('unauthorized');
+                    }
+                }
+            });
+        }
+    });
+}
+
 exports.forgotPassword = (req, res) => {
     const token = jwt.sign({ reg_no : req.body.reg_no }, env_data.JWT_TOKEN);
     const html = passwordResetmail.html(token);
@@ -353,4 +473,78 @@ exports.forgotPassword = (req, res) => {
         });
 
     });
+}
+
+exports.GetStudentState = (req, res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT value FROM states WHERE state = is_students_enrolled`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.status(200).json(resp.rows[0]);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
+
+exports.ConfirmStudent = (req , res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`UPDATE students SET confirmed_comp = '${req.body.comp_id}' WHERE reg_no = '${req.body.reg_no}' RETURNING *`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('failed');
+                    } else {
+                        const html1 = selectedMail.html(req.body.comp_name);
+                        mailer.sendEmail('admin@pdc.com', 'congratulations !!! you have been selected', 'Selected to a company', html1).then(
+                            res.status(200).json(resp.rows[0])
+                        );
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
+
+exports.GetConfirmedStudentDetails = (req , res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT
+                                students.reg_no,
+                                students.index_no,
+                                students.name,
+                                company.comp_name
+                              FROM
+                                students
+                              INNER JOIN
+                                company
+                              ON
+                                students.confirmed_comp = company.comp_id
+                                `, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('failed');
+                    } else {
+                        res.status(200).json(resp.rows)
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
 }

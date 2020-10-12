@@ -1,0 +1,183 @@
+Software License
+------------------------------------------------------------------------------------------------------------
+SMART Internship Manager
+
+Terms & Conditions
+
+These Terms and Conditions for the website www.smartinternshipmanager.com
+constitute a legal agreement between the user of the Website and SMART Internship
+Manager at Professional Development Center of UCSC, 35 Reid Ave, Colombo 07.
+By using our Website, you accept these terms and conditions in full, if you disagree with
+these terms and conditions or any part of these terms and conditions, you must not use
+our Website. If you register with our Website, submit any material to our Website or use
+any of our Website services, we will ask you to expressly agree to these terms and
+conditions. Our Website uses cookies; by using our Website or agreeing to these terms
+and conditions, you consent to our use of cookies in accordance with the terms of our
+Privacy and Policy.
+
+SMART Internship Manager is a web portal for internships
+
+The Website exists as an online platform with the purpose of connecting
+undergraduates seeking internships, IT companies offer internships and Professional
+Development Center of UCSC handling the internship process. For registered IT
+Companies, can publish their internship adverts after receiving a request from PDC via
+the web portal. For enrolled undergraduates can view and apply for the internship
+adverts through the site. And also registration of the IT companies will happen after
+approving of PDC. Registered IT companies can upload IT related internship vacancies
+to the site. All adverts are screened by the PDC and approved adverts are published
+through the site to view students.
+
+Companies are responsible for ensuring that advertising content, text, images, graphics,
+uploaded for inclusion on site complies with all applicable laws. Otherwise PDC declines
+any non related, inaccuracy adverts. The companies and undergraduate users do not
+violate any copyright, intellectual property rights or other rights of any person or entity.
+
+Registration and user accounts
+
+You must be legally able to form a binding contract and authorized to offer internships
+or IT related services. When using the Website, it is your responsibility to ensure that
+you are compliant with all local, state, federal, and international laws that apply. It is also
+your responsibility to ensure that all information and content that you submit is properly
+represented and true to the best of your knowledge.You agree to the assumption of full
+legal responsibility for your actions of the following: registration on the Website, publish
+adverts on the Website, communications with the Website, and any other actions or
+content in regards to your use of the Website.
+
+Before publishing your adverts to the website, you will first need to register with the
+Website by creating an account with SMART Internship Manager. You can do this by
+completing and submitting the company registration form on our website. All
+registrations of the companies will go through a verification process in order to ensure
+that only IT related, credible and reputable companies register on the Website. This
+process can take up to 24 hours to complete, after we will notify the companies to
+provide access to login to the Website. Users are required to submit a valid email
+address when registering.
+
+You must not allow any other person to use your account to access the Website.
+
+You must notify us in writing immediately if you become aware of any unauthorised use
+of your account.
+
+You must not use any other person’s account to access the Website, unless you have
+that person’s express permission to do so.
+
+You must keep your password confidential. You must notify us in writing immediately if
+you become aware of any disclosure of your password.
+
+If you violate our Terms, we suspend your account, cancel your account. If we suspend
+or cancel your account, we will notify you by email and you will no longer have access
+to any services in our site.
+
+Internship Adverts
+
+You can upload only IT related adverts and should mention the number of internships
+available for IT related vacancies in your company. You have no access to directly
+publish adverts to students through the system. All adverts will be published if only
+approved by the PDC. We reserve the right not to publish any adverts that are irrelevant
+or adverts that violate SMART Internship Manager rules.
+
+Undergraduate CVs
+
+Students can not directly send their cvs to the companies through the system because
+PDC will screen all the cvs before sending to the companies. Undergraduates can only
+upload a specific number of cvs recommended by the PDC.
+
+Rating and Reviews
+
+To provide a trusted online platform for all users, we use a rating and reviews system.
+Any enrolled undergraduate can rate and review any registered company in the system.
+Our system is based on trust, and trust comes from honest discussion. So, we ask you
+to keep to the facts when writing a review. The best reviews give constructive
+information that will help others specially internship seekers in the network make good
+decisions. We will not tolerate personal insults or opinions that are irrelevant to the
+case. All reviews may be checked by SMART Internship Manager and we will remove
+review if we find that it violates our guidelines.
+
+Copyright
+
+Copyright 2020, all rights reserved by the Professional Development Center of UCSC
+Subject to the express provisions of these Terms:
+
+(a) we, together with our licensors, own and control all the copyright and other
+intellectual property rights in our Website and the material on our website; and
+
+(b) all the copyright and other intellectual property rights in our Website and the
+material on our Website are protected by the intellectual property law of the
+Democratic Socialist Republic of Sri Lanka and the applicable international
+intellectual property laws.
+
+Licence to use the Website
+
+You may:
+(a) view pages from our Website in a web browser.
+(b) download adverts and students cv for authorized parties.
+(c) print pages from our Website.
+You may only use our Website for your company and business purposes, and you must
+not use our Website for any other purposes.
+Except as expressly permitted by these Terms, you must only modify personal
+information related to your company in your own user Dashboard and not edit or
+otherwise modify any other material on our Website.
+We reserve the right to restrict access to areas of our Website, or indeed our whole
+website, at our discretion. You must not circumvent or bypass, or attempt to circumvent
+or bypass, any access restriction measures on our Website.
+This site uses cookies, which means that you must have cookies enabled on your
+computer in order for all functionality on this site to work properly. A cookie cannot read
+data off your hard disk or read cookie files created by other sites. Cookies, by
+themselves, cannot be used to find out the identity of any user.
+
+Your content: rules
+
+Your content must not be illegal or unlawful, must not infringe any person’s/companies’
+legal rights, and must not be capable of giving rise to legal action against any
+person/company (in each case in any jurisdiction and under any applicable law).
+
+Site availability
+
+SMART Internship Manager does not guarantee continuous or secure access to the
+Web Site.
+
+Modifications
+
+SMART Internship Manager and PDC of UCSC reserves the right to modify these
+Terms and Conditions. Such modifications shall be effective immediately upon posting
+on our website. You are responsible for the reviewing of such modifications. Your
+continued access or use of SMART Internship Manager shall be deemed your
+acceptance of the modified terms and conditions.
+
+Our details
+
+The Website is owned and operated by SMART Internship Manager and PDC OF
+UCSC.
+You can contact us by writing to the address given above, by using our website contact
+form, by email to support@smartinternshipmanager.com or by telephone on xxx.
+
+Privacy Policy
+
+In order for the website to provide a safe and useful service, it is important for SMART
+Internship Manager to collect and use your company information.
+
+Users’ information
+
+We initially enroll all 3rd year undergraduates of UCSC to the system.
+We collect and store the following information of your company:
+● Email address, contact information, company registration details, establishment
+date, employees information(not personal) and (mentioned in registration form)
+● Other information, including users' IP address and standard web log information.
+We use students’/companies’ personal information to provide our services,
+● Resolve disputes, and troubleshoot problems
+● Customize users experience, measure interest in our services
+● Improve our services and inform users about services and updates
+We may disclose users’ information to respond to legal requirements, enforce our
+policies, respond to claims that a posting or other content violates other's rights, or
+protect anyone's rights, property, or safety.
+
+
+Security
+
+● We use lots of tools (encryption, passwords, physical security) to protect your
+information against unauthorized access and disclosure.
+● All personal electronic details will be kept private by the Service except for those
+that you wish to disclose.
+● It is unacceptable to disclose the contact information of others through the
+Service.
+● If you violate the laws of your country of residence and/or the terms of use of the
+Service you forfeit your privacy rights over your personal/company information.

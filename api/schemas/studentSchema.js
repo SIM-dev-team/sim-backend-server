@@ -5,6 +5,8 @@ const StudentSchema = joi.object().keys({
     reg_no: joi.string().required(),
     index_no: joi.string(),
     name: joi.string().required(),
+    gpa: joi.string().required(),
+    contact: joi.string().required(),
     course: joi.number().required()
 });
 
