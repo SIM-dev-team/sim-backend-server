@@ -528,6 +528,7 @@ exports.GetConfirmedStudentDetails = (req , res) =>{
                                 students.reg_no,
                                 students.index_no,
                                 students.name,
+                                students.course,
                                 company.comp_name
                               FROM
                                 students
