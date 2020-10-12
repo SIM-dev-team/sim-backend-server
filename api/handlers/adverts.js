@@ -273,7 +273,7 @@ exports.ApplyForAdvert = ( req , res ) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-                client.query(`INSERT INTO advert_student(id,s_id , a_id , cv_link)VALUES(nextval('student_advert_sequence'),$1,$2,$3) RETURNING *`,[verified.id , req.body.Data.advert , req.body.Data.link ], (errp, resp) => {
+                client.query(`INSERT INTO advert_student(id,s_id , a_id , cv_link,is_available)VALUES(nextval('student_advert_sequence'),$1,$2,$3,$4) RETURNING *`,[verified.id , req.body.Data.advert , req.body.Data.link, true ], (errp, resp) => {
                     
                     if (errp) {
                         res.send(errp);
@@ -488,3 +488,43 @@ exports.CompaniesPostedAds = (req, res) => {
     }
 }
 
+exports.RequestAdverts = (req, res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`INSERT INTO states (state , value , deadline)VALUES($1,$2,$3) RETURNING *`,['is_requesting_adverts' , true , req.body.date], (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.status(200).json(resp.rows[0]);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('invalid token');
+    }
+}
+
+
+exports.GetAdvertState = (req, res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT value,deadline FROM states WHERE state = is_requesting_adverts`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.status(200).json(resp.rows[0]);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}

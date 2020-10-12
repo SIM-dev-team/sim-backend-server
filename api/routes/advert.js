@@ -22,5 +22,7 @@ router.get("/getApprovedAds", handler.GetApprovedAdverts);
 router.get("/getDeclinedAds", handler.GetDeclinedAdverts);
 router.get("/getAdPostedCompanies", handler.CompaniesPostedAds);
 router.get("/getApprovdAdvertsByCompanyId/:id", handler.GetApprovedAdvertsByCompanyId);
+router.post("/requestAdverts" , handler.RequestAdverts);
+router.get("/getAdvertsState" , handler.GetAdvertState);
 
 module.exports = router;
