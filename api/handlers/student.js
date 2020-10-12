@@ -12,6 +12,7 @@ const StudentSchema = require("../schemas/studentSchema");
 const LoginSchema = require("../schemas/studentLoginSchema");
 
 const studentmail = require('../mails/student/studentMail');
+const selectedMail = require('../mails/student/selected');
 const passwordResetmail = require('../mails/student/studentPasswordReset');
 
 exports.AddNewStudent = (req, res) => {
@@ -54,10 +55,10 @@ exports.AddNewStudent = (req, res) => {
             console.log(resp)
             // onsole.log(obj.data)
             // console.log(count++)
-            const html = studentmail.html(token);
-            mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-                message = resp.rows[0]
-            ).catch(e => console.log(e))
+            // const html = studentmail.html(token);
+            // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+            //     message = resp.rows[0]
+            // ).catch(e => console.log(e))
             try{
                 client.query(`INSERT INTO states (state , value )VALUES($1,$2) RETURNING *`,['is_students_enrolled' , true], (errp, resp) => {
                     client.release();
@@ -421,6 +422,27 @@ exports.getStudentData = (req , res) =>{
     });
 }
 
+exports.getStudentDataById = (req , res) =>{
+    pool.connect((err, client, done) => {
+        if (err) {
+            res.send('error connecting to database');
+        }else{
+            client.query(`SELECT * FROM students WHERE reg_no = '${req.body.id}'`, (errp, resp) => {
+                client.release();
+                if (errp) {
+                    console.error(errp.stack);
+                } else {
+                    if (resp.rows[0]) {
+                        res.send(resp.rows[0]);
+                    } else {
+                        res.send('unauthorized');
+                    }
+                }
+            });
+        }
+    });
+}
+
 exports.forgotPassword = (req, res) => {
     const token = jwt.sign({ reg_no : req.body.reg_no }, env_data.JWT_TOKEN);
     const html = passwordResetmail.html(token);
@@ -455,6 +477,60 @@ exports.GetStudentState = (req, res) =>{
                         res.send('error');
                     } else {
                         res.status(200).json(resp.rows[0]);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
+
+exports.ConfirmStudent = (req , res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`UPDATE students SET confirmed_comp = '${req.body.comp_id}' WHERE reg_no = '${req.body.reg_no}' RETURNING *`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('failed');
+                    } else {
+                        const html1 = selectedMail.html(req.body.comp_name);
+                        mailer.sendEmail('admin@pdc.com', 'congratulations !!! you have been selected', 'Selected to a company', html1).then(
+                            res.status(200).json(resp.rows[0])
+                        );
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
+
+exports.GetConfirmedStudentDetails = (req , res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT
+                                students.reg_no,
+                                students.index_no,
+                                students.name,
+                                company.comp_name
+                              FROM
+                                students
+                              INNER JOIN
+                                company
+                              ON
+                                students.confirmed_comp = company.comp_id
+                                `, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('failed');
+                    } else {
+                        res.status(200).json(resp.rows)
                     }
                 });
             }
