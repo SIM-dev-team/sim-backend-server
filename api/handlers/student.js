@@ -30,15 +30,6 @@ exports.AddNewStudent = (req, res) => {
             console.log(obj.data)
             const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,0,'']
             dataArray.push(tempArray)
-            try{
-                const token = jwt.sign({ reg_no : obj.data[0] }, env_data.JWT_TOKEN);
-            // onsole.log(obj.data)
-            // console.log(count++)
-                const html = studentmail.html(token);
-                mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html)
-            }catch(e){
-                console.log(e);
-            }
         } else {
             continue;
         }
@@ -61,15 +52,13 @@ exports.AddNewStudent = (req, res) => {
         console.log(err.stack)
         } else {
             let message = '';
-            // console.log(resp)
-            // const token = jwt.sign({ reg_no : resp.value.reg_no }, env_data.JWT_TOKEN);
-            // // onsole.log(obj.data)
-            // // console.log(count++)
-            // const html = studentmail.html(token);
-            // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html)
-            // .then(
-            //     message = resp.rows[0]
-            // ).catch(e => console.log(e))
+            console.log(resp)
+            const token = jwt.sign({ reg_no : '2017cs006' }, env_data.JWT_TOKEN);
+            const html = studentmail.html(token);
+            mailer.sendEmail('admin@pdc.com', 'hasanthamalshan07@gmail.com', 'Please set your password', html)
+            .then(
+                message = resp.rows[0]
+            ).catch(e => console.log(e))
             try{
                 client.query(`INSERT INTO states (state , value )VALUES($1,$2) RETURNING *`,['is_students_enrolled' , true], (errp, resp) => {
                     client.release();
