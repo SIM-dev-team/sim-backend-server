@@ -174,12 +174,13 @@ exports.updateStudent = (req, res) => {
 }
 
 exports.addNewStudent = (req, res) => {
+    console.log(req.body.newStudent.regno)
     pool.connect((err, client, done) => {
         if (err) {
             return console.log('err');
         }
         try {
-            const result = joi.validate(req.body, StudentSchema);
+            const result = joi.validate(req.body.newStudent, StudentSchema);
             const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
             console.log(result);
             client.query(`INSERT INTO students(
@@ -197,14 +198,21 @@ exports.addNewStudent = (req, res) => {
                                         projects_2,
                                         projects_3,
                                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`, 
-                                        [result.value.reg_no, 
-                                         result.value.index_no, 
-                                         result.value.name, 
-                                         result.value.email,
-                                         result.value.course,
-                                         result.value.gpa,  
-                                         result.value.contact, 
-                                         '', 
+                                        // [result.value.reg_no, 
+                                        //  result.value.index_no, 
+                                        //  result.value.name, 
+                                        //  result.value.email,
+                                        //  result.value.course,
+                                        //  result.value.gpa,  
+                                        //  result.value.contact, 
+                                        [req.body.newStudent.regno, 
+                                          req.body.newStudent.indexno, 
+                                          req.body.newStudent.name, 
+                                          req.body.newStudent.email,
+                                          req.body.newStudent.degree==="Computer Science"?1:0, 
+                                          req.body.newStudent.gpa,
+                                          req.body.newStudent.contact,   
+                                        '', 
                                          false, 
                                          0,
                                          0,
@@ -216,13 +224,14 @@ exports.addNewStudent = (req, res) => {
                     if (err) {
                         console.log(err.stack)
                     } else {
-                        let message = '';
-                        const html = studentmail.html(token);
-                        mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-                            message = resp.rows[0]
-                        ).catch(e => console.log(e))
+                       console.log(req.body.newStudent.name);
+                        // let message = '';
+                        // const html = studentmail.html(token);
+                        // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+                        //     message = resp.rows[0]
+                        // ).catch(e => console.log(e))
 
-                        res.send(message);
+                        // res.send(message);
                     }
                 });
 
