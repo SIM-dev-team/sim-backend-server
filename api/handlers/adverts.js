@@ -513,7 +513,8 @@ exports.RequestAdverts = (req, res) =>{
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else {
-                client.query(`UPDATE states SET value = true , deadline = ${req.body.date} WHERE state_id = 1  RETURNING *`, (errp, resp) => {
+                console.log(req.body.date);
+                client.query(`UPDATE states SET val = true , deadline = ${req.body.date} WHERE state_id = 1  RETURNING *`, (errp, resp) => {
                     client.release();
                     if (errp) {
                         res.send('error');
