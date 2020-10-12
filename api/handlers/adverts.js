@@ -301,7 +301,7 @@ exports.GetAppliedAdverts = ( req , res ) => {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
             else{
-                console.log("token >" , verified.id);
+                // console.log("token >" , verified.id);
                 client.query(`SELECT * FROM  advert_student WHERE s_id = '${verified.id}'`, (errp, resp) => {
                     client.release();
                     if (errp) {
@@ -485,6 +485,26 @@ exports.CompaniesPostedAds = (req, res) => {
         });
     } catch (e) {
         return res.status(400).send('invalid token');
+    }
+}
+
+exports.GetStudentsForAnAdvert = (req,res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT * FROM advert_student WHERE a_id = ${req.body.a_id}`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.status(200).json(resp.rows);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
     }
 }
 
