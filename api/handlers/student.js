@@ -14,57 +14,6 @@ const LoginSchema = require("../schemas/studentLoginSchema");
 const studentmail = require('../mails/student/studentMail');
 const passwordResetmail = require('../mails/student/studentPasswordReset');
 
-// exports.AddNewStudent = (req, res) => {
-//     pool.connect((err, client, done) => {
-//         if (err) {
-//             return console.log('err');
-//         }
-//         try {
-//             const result = joi.validate(req.body, StudentSchema);
-//             const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
-//             console.log(result);
-//             client.query(`INSERT INTO students(
-//                                         reg_no,
-//                                         index_no,
-//                                         name,
-//                                         email,
-//                                         course,
-//                                         password,
-//                                         is_verified,
-//                                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, 
-//                                         [result.value.reg_no, 
-//                                          result.value.index_no, 
-//                                          result.value.name, 
-//                                          result.value.email,
-//                                          result.value.course, 
-//                                          '', 
-//                                          false, 
-//                                          ''],
-//                 (err, resp) => {
-//                     client.release();
-//                     if (err) {
-//                         console.log(err.stack)
-//                     } else {
-//                         let message = '';
-//                         const html = studentmail.html(token);
-//                         mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-//                             message = resp.rows[0]
-//                         ).catch(e => console.log(e))
-
-//                         res.send(message);
-//                     }
-//                 });
-
-//         } catch (e) {
-//             return e;
-//         }
-//     });
-
-// }
-
-
-
-
 exports.AddNewStudent = (req, res) => {
     //console.log(req.body)
     const strings = req.body;
@@ -78,7 +27,7 @@ exports.AddNewStudent = (req, res) => {
     for(let obj of strings){
         if(obj.data[0] !== 'Reg No' && obj.data[0] !== ''){
             console.log(obj.data)
-            const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,10,'']
+            const tempArray = [obj.data[0],obj.data[1],obj.data[2],obj.data[3],obj.data[4]==='1'?1:0,obj.data[5],obj.data[6],'',false,0,'']
             dataArray.push(tempArray)
         } else {
             continue;
@@ -91,7 +40,7 @@ exports.AddNewStudent = (req, res) => {
             console.log('err');
         }
         try {
-            let query1 = format('INSERT INTO students (reg_no, index_no, name, email, course, contact, current_gpa, password, is_verified, completed, secretKey) VALUES %L ON CONFLICT (reg_no) DO NOTHING returning *', dataArray);
+            let query1 = format('INSERT INTO students (reg_no, index_no, name, email, course, contact, current_gpa, password, is_verified, confirmed_comp, secretKey) VALUES %L ON CONFLICT (reg_no) DO NOTHING returning *', dataArray);
             // const result = joi.validate(req.body[1], StudentSchema);
             // const token = jwt.sign({ reg_no : result.value.reg_no }, env_data.JWT_TOKEN);
             // console.log(result);
@@ -103,14 +52,24 @@ exports.AddNewStudent = (req, res) => {
         } else {
             let message = '';
             console.log(resp)
-            //onsole.log(obj.data)
-            //console.log(count++)
-            // const html = studentmail.html(token);
-            // mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
-            //     message = resp.rows[0]
-            // ).catch(e => console.log(e))
-
-            res.send({message: "Success"})
+            // onsole.log(obj.data)
+            // console.log(count++)
+            const html = studentmail.html(token);
+            mailer.sendEmail('admin@pdc.com', result.value.email, 'Please set your password', html).then(
+                message = resp.rows[0]
+            ).catch(e => console.log(e))
+            try{
+                client.query(`INSERT INTO states (state , value )VALUES($1,$2) RETURNING *`,['is_students_enrolled' , true], (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.send({message: "Success"})
+                    }
+                });
+            }catch(e){
+                res.send(e);
+            }
             }
         });
 
@@ -126,7 +85,7 @@ exports.AddNewStudent = (req, res) => {
 //                         current_gpa,
 //                         password,
 //                         is_verified,
-//                         completed,
+//                         confirmed_comp,
 //                         secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT (reg_no) DO NOTHING RETURNING *`, 
 //                         [obj.data[0], 
 //                           obj.data[1], 
@@ -232,8 +191,11 @@ exports.addNewStudent = (req, res) => {
                                         contact,
                                         password,
                                         is_verified,
-                                        completed,
-                                        secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`, 
+                                        confirmed_comp,
+                                        projects_1,
+                                        projects_2,
+                                        projects_3,
+                                        secretKey) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`, 
                                         [result.value.reg_no, 
                                          result.value.index_no, 
                                          result.value.name, 
@@ -243,7 +205,10 @@ exports.addNewStudent = (req, res) => {
                                          result.value.contact, 
                                          '', 
                                          false, 
-                                         10,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
                                          ''],
                 (err, resp) => {
                     client.release();
@@ -477,4 +442,24 @@ exports.forgotPassword = (req, res) => {
         });
 
     });
+}
+
+exports.GetStudentState = (req, res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT value FROM states WHERE state = is_students_enrolled`, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('error');
+                    } else {
+                        res.status(200).json(resp.rows[0]);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
 }

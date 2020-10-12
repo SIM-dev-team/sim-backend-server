@@ -142,25 +142,29 @@ exports.CompanyLogin = (req, res) => {
     } else {
         pool.connect((err, client, done) => {
             if (err) res.send('error connecting to database...');
-            client.query(`SELECT password,comp_id,is_verified FROM company WHERE email = '${req.body.email}'`, (errp, resp) => {
+            client.query(`SELECT password,comp_id,is_verified,is_approved FROM company WHERE email = '${req.body.email}'`, (errp, resp) => {
                 client.release();
                 if (errp) {
                     res.send(errp.stack);
                 } else {
                     if (resp.rows[0]) {
-                        if (resp.rows[0].is_verified) {
-                            hash.comparePasswords(req.body.password, resp.rows[0].password).then(
-                                resopnd => {
-                                    if (resopnd) {
-                                        const token = jwt.sign({ id: resp.rows[0].comp_id }, config.env_data.JWT_TOKEN)
-                                        res.status(200).header('authtoken', token).send(token);
-                                    } else {
-                                        res.send('Incorrect password');
+                        if (resp.rows[0].is_approved) {
+                            if (resp.rows[0].is_verified) {
+                                hash.comparePasswords(req.body.password, resp.rows[0].password).then(
+                                    resopnd => {
+                                        if (resopnd) {
+                                            const token = jwt.sign({ id: resp.rows[0].comp_id }, config.env_data.JWT_TOKEN)
+                                            res.status(200).header('authtoken', token).send(token);
+                                        } else {
+                                            res.send('Incorrect password');
+                                        }
                                     }
-                                }
-                            )
-                        } else {
-                            res.send('Account not verified');
+                                )
+                            } else {
+                                res.send('Account not verified');
+                            }
+                        }else{
+                            res.send('Account not approved');
                         }
                     } else {
                         res.send('no user data found');

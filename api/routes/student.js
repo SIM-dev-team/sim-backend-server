@@ -12,5 +12,6 @@ router.post("/getStudentData" , handler.getStudentData);
 router.post("/update" , handler.UpdateStudent);
 router.post("/addProject" , handler.AddProject);
 router.get("/getProject/:id", handler.getProject);
+router.get("/studentState", handler.GetStudentState);
 
 module.exports = router;
