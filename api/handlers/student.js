@@ -209,6 +209,7 @@ exports.addNewStudent = (req, res) => {
     }); 
 }
 
+
 exports.UpdateStudent = (req, res) => {
     pool.connect((err, client, done) => {
         if (err) {
@@ -495,6 +496,7 @@ exports.GetConfirmedStudentDetails = (req , res) =>{
                                 students.reg_no,
                                 students.index_no,
                                 students.name,
+                                students.course,
                                 company.comp_name
                               FROM
                                 students
@@ -503,6 +505,26 @@ exports.GetConfirmedStudentDetails = (req , res) =>{
                               ON
                                 students.confirmed_comp = company.comp_id
                                 `, (errp, resp) => {
+                    client.release();
+                    if (errp) {
+                        res.send('failed');
+                    } else {
+                        res.status(200).json(resp.rows)
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        return res.status(400).send('error');
+    }
+}
+
+exports.GetStudentCount = (req , res) =>{
+    try {
+        pool.connect((err, client, done) => {
+            if (err) res.send('error connecting to database...');
+            else {
+                client.query(`SELECT COUNT(reg_no) FROM students`, (errp, resp) => {
                     client.release();
                     if (errp) {
                         res.send('failed');
